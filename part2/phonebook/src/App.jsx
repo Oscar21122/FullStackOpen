@@ -124,7 +124,7 @@ const App = () => {
     for (const person of persons) {
       if (person.name === newName) {
         already = 1
-        if (confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        if (confirm(`${newName}  is already added to phonebook, replace the old number with a new one?`)) {
           phoneService
             .update(person.id, nameObject)
             .then(returnedPerson => {
@@ -160,6 +160,12 @@ const App = () => {
           setSuccededMessage(null)
         }, 5000)
       })
+      .catch(error => {
+        setErrorMessage(error.response.data.error)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
     }
     setNewName('')
     setNewNumber('')
@@ -176,7 +182,10 @@ const App = () => {
     }    
   }
 
-  const filteredPersons = persons.filter(person => person.name.toLowerCase().startsWith(filter.toLowerCase()))
+  const filteredPersons = persons.filter(person => 
+    person.name && typeof person.name === "string" &&
+    filter && person.name.toLowerCase().startsWith(filter.toLowerCase())
+  )  
 
   useEffect(() => {
     phoneService
